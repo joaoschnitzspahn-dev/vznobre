@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase/server";
-import { Reveal } from "@/components/reveal";
 
 export default async function PortalPage() {
   const supabase = await createClient();
@@ -33,118 +32,107 @@ export default async function PortalPage() {
   const presencas = presencasRes.data ?? [];
 
   return (
-    <main className="mx-auto w-full max-w-[980px] pb-16">
-      <Reveal className="apple-section">
-        <h1 className="text-[56px] font-bold tracking-[-0.02em] text-[#1d1d1f]">Portal do Aluno</h1>
-        <p className="mt-3 text-lg font-light text-[#6e6e73]">Bem-vindo(a), {perfil?.nome ?? user?.email}</p>
-      </Reveal>
+    <div className="mx-auto w-full max-w-6xl px-4 py-8">
+      <h1 className="text-3xl font-bold text-cyan-300">Portal do Aluno</h1>
+      <p className="mt-2 text-slate-200">Bem-vindo(a), {perfil?.nome ?? user?.email}</p>
 
-      <Reveal className="apple-section border-t border-[#e5e5ea] pt-14">
-        <section className="space-y-2">
-          <h2 className="text-3xl font-bold text-[#1d1d1f]">Perfil</h2>
-          <p className="text-[#6e6e73]">Curso atual: {perfil?.curso_id ?? "-"}</p>
-          <p className="text-[#6e6e73]">Turma: {perfil?.turma_id ?? "-"}</p>
-          <p className="text-[#6e6e73]">WhatsApp: {perfil?.whatsapp ?? "-"}</p>
+      <div className="mt-6 grid gap-4 md:grid-cols-2">
+        <section className="rounded-2xl border border-cyan-500/30 bg-[#10223d] p-4">
+          <h2 className="font-semibold text-cyan-200">Perfil e Curso</h2>
+          <p className="mt-2 text-sm">Curso atual: {perfil?.curso_id ?? "-"}</p>
+          <p className="text-sm">Turma: {perfil?.turma_id ?? "-"}</p>
+          <p className="text-sm">WhatsApp: {perfil?.whatsapp ?? "-"}</p>
         </section>
-      </Reveal>
-
-      <Reveal className="apple-section border-t border-[#e5e5ea] pt-14">
-        <section>
-          <h2 className="text-3xl font-bold text-[#1d1d1f]">Comunicados</h2>
-          <ul className="mt-5 space-y-4 text-base">
+        <section className="rounded-2xl border border-cyan-500/30 bg-[#10223d] p-4">
+          <h2 className="font-semibold text-cyan-200">Comunicados</h2>
+          <ul className="mt-2 space-y-2 text-sm">
             {comunicados?.map((c) => (
-              <li key={c.id} className="border-b border-[#e5e5ea] pb-4">
-                <p className="font-semibold text-[#1d1d1f]">{c.titulo}</p>
-                <p className="mt-1 font-light text-[#6e6e73]">{c.conteudo}</p>
+              <li key={c.id} className="rounded bg-[#0a1628] p-2">
+                <p className="font-medium">{c.titulo}</p>
+                <p>{c.conteudo}</p>
               </li>
             ))}
           </ul>
         </section>
-      </Reveal>
+      </div>
 
-      <Reveal className="apple-section border-t border-[#e5e5ea] pt-14">
-        <section>
-        <h2 className="text-3xl font-bold text-[#1d1d1f]">Atividades</h2>
-        <ul className="mt-5 space-y-4 text-base">
+      <section className="mt-4 rounded-2xl border border-cyan-500/30 bg-[#10223d] p-4">
+        <h2 className="font-semibold text-cyan-200">Atividades</h2>
+        <ul className="mt-2 space-y-2 text-sm">
           {atividades?.map((a) => (
-            <li key={a.id} className="border-b border-[#e5e5ea] pb-4">
-              <p className="font-semibold text-[#1d1d1f]">{a.titulo}</p>
-              <p className="font-light text-[#6e6e73]">{a.descricao}</p>
-              <p className="mt-1 text-sm text-[#6e6e73]">Entrega: {a.data_entrega}</p>
+            <li key={a.id} className="rounded bg-[#0a1628] p-2">
+              <p className="font-medium">{a.titulo}</p>
+              <p>{a.descricao}</p>
+              <p>Entrega: {a.data_entrega}</p>
             </li>
           ))}
         </ul>
       </section>
-      </Reveal>
 
-      <Reveal className="apple-section border-t border-[#e5e5ea] pt-14">
-        <section>
-        <h2 className="text-3xl font-bold text-[#1d1d1f]">Notas</h2>
+      <section className="mt-4 rounded-2xl border border-cyan-500/30 bg-[#10223d] p-4">
+        <h2 className="font-semibold text-cyan-200">Notas</h2>
         <div className="mt-2 overflow-x-auto">
-          <table className="w-full border-collapse text-left text-sm">
+          <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-[#e5e5ea] text-[11px] uppercase tracking-[0.08em] text-[#6e6e73]">
-                <th className="py-3">Atividade</th>
-                <th className="py-3">Data</th>
-                <th className="py-3">Nota</th>
-                <th className="py-3">Status</th>
+              <tr className="text-cyan-100">
+                <th className="p-2">Atividade</th>
+                <th className="p-2">Data</th>
+                <th className="p-2">Nota</th>
+                <th className="p-2">Status</th>
               </tr>
             </thead>
             <tbody>
               {notas?.map((n) => (
-                <tr key={n.atividade_id} className="border-b border-[#f0f0f2] text-[#1d1d1f]">
-                  <td className="py-3">{(n.atividades as { titulo?: string })?.titulo ?? "-"}</td>
-                  <td className="py-3 text-[#6e6e73]">{(n.atividades as { data_entrega?: string })?.data_entrega ?? "-"}</td>
-                  <td className="py-3">{n.nota ?? "-"}</td>
-                  <td className="py-3 text-[#6e6e73]">{n.status}</td>
+                <tr key={n.atividade_id} className="border-t border-cyan-900/40">
+                  <td className="p-2">{(n.atividades as { titulo?: string })?.titulo ?? "-"}</td>
+                  <td className="p-2">{(n.atividades as { data_entrega?: string })?.data_entrega ?? "-"}</td>
+                  <td className="p-2">{n.nota ?? "-"}</td>
+                  <td className="p-2">{n.status}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       </section>
-      </Reveal>
 
-      <Reveal className="apple-section border-t border-[#e5e5ea] pt-14">
-      <section className="grid gap-10 md:grid-cols-2">
-        <article>
-          <h2 className="text-3xl font-bold text-[#1d1d1f]">Roteiros das Aulas</h2>
-          <ul className="mt-4 space-y-3 text-sm">
+      <section className="mt-4 grid gap-4 md:grid-cols-2">
+        <article className="rounded-2xl border border-cyan-500/30 bg-[#10223d] p-4">
+          <h2 className="font-semibold text-cyan-200">Roteiros das Aulas</h2>
+          <ul className="mt-2 space-y-2 text-sm">
             {roteiros.map((aula) => (
-              <li key={aula.id} className="border-b border-[#e5e5ea] pb-3">
-                <p className="font-semibold text-[#1d1d1f]">
+              <li key={aula.id} className="rounded bg-[#0a1628] p-2">
+                <p className="font-medium">
                   Aula {aula.numero_aula} - {aula.titulo}
                 </p>
-                <p className="text-xs text-[#6e6e73]">{aula.data_aula}</p>
-                <p className="mt-1 font-light text-[#6e6e73]">{aula.roteiro}</p>
+                <p className="text-xs text-slate-300">{aula.data_aula}</p>
+                <p className="mt-1 text-slate-200">{aula.roteiro}</p>
               </li>
             ))}
           </ul>
         </article>
 
-        <article>
-          <h2 className="text-3xl font-bold text-[#1d1d1f]">Minha Chamada</h2>
-          <ul className="mt-4 space-y-3 text-sm">
+        <article className="rounded-2xl border border-cyan-500/30 bg-[#10223d] p-4">
+          <h2 className="font-semibold text-cyan-200">Minha Chamada</h2>
+          <ul className="mt-2 space-y-2 text-sm">
             {presencas.map((registro) => {
               const aula = registro.aulas as { numero_aula?: number; data_aula?: string; titulo?: string; roteiro?: string } | null;
               return (
-                <li key={registro.aula_id} className="border-b border-[#e5e5ea] pb-3">
-                  <p className="font-semibold text-[#1d1d1f]">
+                <li key={registro.aula_id} className="rounded bg-[#0a1628] p-2">
+                  <p className="font-medium">
                     Aula {aula?.numero_aula ?? "-"} - {aula?.titulo ?? "-"}
                   </p>
-                  <p className="text-xs text-[#6e6e73]">{aula?.data_aula ?? "-"}</p>
-                  <p className={registro.status === "presente" ? "text-[#1d1d1f]" : "text-[#6e6e73]"}>
+                  <p className="text-xs text-slate-300">{aula?.data_aula ?? "-"}</p>
+                  <p className={registro.status === "presente" ? "text-emerald-300" : "text-rose-300"}>
                     {registro.status === "presente" ? "Presente" : "Falta"}
                   </p>
-                  {aula?.roteiro && <p className="mt-1 font-light text-[#6e6e73]">{aula.roteiro}</p>}
-                  {registro.observacao && <p className="text-xs text-[#6e6e73]">Obs: {registro.observacao}</p>}
+                  {aula?.roteiro && <p className="mt-1 text-slate-200">{aula.roteiro}</p>}
+                  {registro.observacao && <p className="text-xs text-slate-300">Obs: {registro.observacao}</p>}
                 </li>
               );
             })}
           </ul>
         </article>
       </section>
-      </Reveal>
-    </main>
+    </div>
   );
 }

@@ -158,7 +158,7 @@ export default async function AdminChamadasPage({
             </div>
             <input name="titulo" placeholder="Título da aula" className="input-modern" />
             <textarea name="roteiro" placeholder="Roteiro da aula" className="input-modern h-28" />
-            <button className="apple-button-primary px-4 py-2 text-sm">Salvar aula</button>
+            <button className="neon-button px-4 py-2 text-sm">Salvar aula</button>
           </div>
         </form>
 
@@ -176,7 +176,7 @@ export default async function AdminChamadasPage({
                 ))}
               </select>
               <input type="date" name="data_inicio_import" className="input-modern" />
-              <button className="apple-button-primary px-4 py-2 text-sm">Importar 12 aulas</button>
+              <button className="neon-button px-4 py-2 text-sm">Importar 12 aulas</button>
             </div>
           </form>
 
@@ -226,7 +226,7 @@ export default async function AdminChamadasPage({
               );
             })}
           </div>
-          <button className="apple-button-primary mt-4 px-4 py-2 text-sm">Salvar chamada</button>
+          <button className="neon-button mt-4 px-4 py-2 text-sm">Salvar chamada</button>
         </form>
       )}
     </section>

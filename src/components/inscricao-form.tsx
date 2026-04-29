@@ -88,7 +88,7 @@ export function InscricaoForm({ cursoInicial }: { cursoInicial?: string }) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 rounded-[18px] bg-white p-6 shadow-[0_2px_20px_rgba(0,0,0,0.08)]">
+    <form onSubmit={handleSubmit(onSubmit)} className="liquid-panel fade-up space-y-4 rounded-[28px] p-6">
       <input {...register("nome")} placeholder="Nome completo" className="input-modern" />
       {errors.nome && <p className="text-sm text-red-300">{errors.nome.message}</p>}
 
@@ -121,9 +121,9 @@ export function InscricaoForm({ cursoInicial }: { cursoInicial?: string }) {
       </select>
       <textarea {...register("observacoes")} placeholder="Observações (opcional)" className="input-modern h-24" />
 
-      <p className="text-sm text-[#6e6e73]">Sua inscrição será analisada e entraremos em contato pelo WhatsApp em caso de aprovação.</p>
-      {erro && <p className="text-sm text-red-600">{erro}</p>}
-      <button disabled={loading} className="apple-button-primary px-5 py-2 text-sm disabled:opacity-60">
+      <p className="text-sm text-cyan-100">Sua inscrição será analisada e entraremos em contato pelo WhatsApp em caso de aprovação.</p>
+      {erro && <p className="text-sm text-red-300">{erro}</p>}
+      <button disabled={loading} className="neon-button px-5 py-2 disabled:opacity-60">
         {loading ? "Enviando..." : "Enviar inscrição"}
       </button>
     </form>

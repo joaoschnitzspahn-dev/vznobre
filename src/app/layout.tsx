@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
-import { TopNav } from "@/components/top-nav";
+import { Nunito } from "next/font/google";
+import { SplashLogo } from "@/components/splash-logo";
 import "./globals.css";
+
+const nunito = Nunito({
+  subsets: ["latin"],
+  variable: "--font-geist-sans",
+  weight: ["400", "500", "600", "700", "800"],
+});
 
 export const metadata: Metadata = {
   title: "Visão Nobre",
@@ -13,10 +20,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className="h-full antialiased">
+    <html lang="pt-BR" className={`${nunito.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <TopNav />
-        <div className="px-4">{children}</div>
+        <SplashLogo />
+        {children}
       </body>
     </html>
   );
