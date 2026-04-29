@@ -20,56 +20,30 @@ const roteiroInformatica = [
 async function criarAula(formData: FormData) {
   "use server";
   const admin = createAdminClient();
+  const turmaId = String(formData.get("turma_id") ?? "");
+  const numeroAula = Number(formData.get("numero_aula") ?? 1);
+  const dataAula = String(formData.get("data_aula") ?? "");
+  const tituloLivre = String(formData.get("titulo") ?? "");
+  const roteiroLivre = String(formData.get("roteiro") ?? "");
+  if (!turmaId || !dataAula) return;
+
+  const { data: turma } = await admin.from("turmas").select("curso_id").eq("id", turmaId).maybeSingle();
+  const { data: curso } = turma?.curso_id
+    ? await admin.from("cursos").select("tipo").eq("id", turma.curso_id).maybeSingle()
+    : { data: null as { tipo?: string } | null };
+
+  const isInformatica = curso?.tipo === "informatica";
+  const roteiroAuto = roteiroInformatica[numeroAula - 1] ?? "";
   const payload = {
-    turma_id: String(formData.get("turma_id") ?? ""),
-    numero_aula: Number(formData.get("numero_aula") ?? 1),
-    data_aula: String(formData.get("data_aula") ?? ""),
-    titulo: String(formData.get("titulo") ?? ""),
-    roteiro: String(formData.get("roteiro") ?? ""),
+    turma_id: turmaId,
+    numero_aula: numeroAula,
+    data_aula: dataAula,
+    titulo: isInformatica ? `Aula ${numeroAula} - Informática Básica` : tituloLivre,
+    roteiro: isInformatica ? roteiroAuto : roteiroLivre,
   };
-  if (!payload.turma_id || !payload.data_aula || !payload.titulo || !payload.roteiro) return;
+
+  if (!payload.titulo || !payload.roteiro) return;
   await admin.from("aulas").insert(payload);
-  revalidatePath("/admin/chamadas");
-}
-
-async function importarRoteiroInformatica(formData: FormData) {
-  "use server";
-  const admin = createAdminClient();
-  const turmaId = String(formData.get("turma_id_import") ?? "");
-  const dataInicio = String(formData.get("data_inicio_import") ?? "");
-  if (!turmaId || !dataInicio) return;
-
-  const inicio = new Date(`${dataInicio}T00:00:00`);
-  const aulas = roteiroInformatica.map((roteiro, index) => {
-    const dataAula = new Date(inicio);
-    dataAula.setDate(inicio.getDate() + index * 7);
-    const yyyy = dataAula.getFullYear();
-    const mm = String(dataAula.getMonth() + 1).padStart(2, "0");
-    const dd = String(dataAula.getDate()).padStart(2, "0");
-    return {
-      turma_id: turmaId,
-      numero_aula: index + 1,
-      data_aula: `${yyyy}-${mm}-${dd}`,
-      titulo: `Aula ${index + 1} - Informática Básica`,
-      roteiro,
-    };
-  });
-
-  for (const aula of aulas) {
-    const { data: existente } = await admin
-      .from("aulas")
-      .select("id")
-      .eq("turma_id", aula.turma_id)
-      .eq("numero_aula", aula.numero_aula)
-      .maybeSingle();
-
-    if (existente?.id) {
-      await admin.from("aulas").update(aula).eq("id", existente.id);
-    } else {
-      await admin.from("aulas").insert(aula);
-    }
-  }
-
   revalidatePath("/admin/chamadas");
 }
 
@@ -138,7 +112,9 @@ export default async function AdminChamadasPage({
   return (
     <section className="rounded-[18px] bg-white p-6 shadow-[0_2px_20px_rgba(0,0,0,0.08)]">
       <h1 className="text-3xl font-bold text-[#1d1d1f]">Chamada e Roteiro</h1>
-      <p className="mt-2 text-sm text-[#6e6e73]">Crie a aula com data, número e roteiro. Depois marque presença/falta dos matriculados.</p>
+      <p className="mt-2 text-sm text-[#6e6e73]">
+        Crie a aula com data e número. Para turmas de Informática, o roteiro oficial é aplicado automaticamente.
+      </p>
 
       <div className="mt-5 grid gap-4 lg:grid-cols-2">
         <form action={criarAula} className="rounded-[18px] bg-[#fafafa] p-4">
@@ -162,24 +138,6 @@ export default async function AdminChamadasPage({
           </div>
         </form>
 
-        <div className="space-y-4">
-          <form action={importarRoteiroInformatica} className="rounded-[18px] bg-[#fafafa] p-4">
-            <h2 className="font-bold text-[#1d1d1f]">Importar roteiro completo (PDF Informática)</h2>
-            <p className="mt-1 text-xs text-[#6e6e73]">Gera automaticamente 12 aulas semanais com base no material enviado.</p>
-            <div className="mt-3 space-y-2">
-              <select name="turma_id_import" className="input-modern">
-                <option value="">Selecione a turma</option>
-                {turmas?.map((turma) => (
-                  <option key={turma.id} value={turma.id}>
-                    Turma {turma.trimestre}º tri/{turma.ano} - {turma.status}
-                  </option>
-                ))}
-              </select>
-              <input type="date" name="data_inicio_import" className="input-modern" />
-              <button className="neon-button px-4 py-2 text-sm">Importar 12 aulas</button>
-            </div>
-          </form>
-
         <div className="rounded-[18px] bg-[#fafafa] p-4">
           <h2 className="font-bold text-[#1d1d1f]">Aulas lançadas</h2>
           <ul className="mt-3 space-y-2 text-sm">
@@ -195,7 +153,6 @@ export default async function AdminChamadasPage({
               </li>
             ))}
           </ul>
-        </div>
         </div>
       </div>
 
