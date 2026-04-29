@@ -1,65 +1,66 @@
 import Image from "next/image";
+import Link from "next/link";
+import { CourseCard } from "@/components/course-card";
+import { getCursosLanding, getSiteConfig } from "@/lib/site-config";
+import { Reveal } from "@/components/reveal";
 
-export default function Home() {
+export default async function Home() {
+  const config = await getSiteConfig();
+  const cursos = await getCursosLanding();
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="mx-auto w-full max-w-[980px] pb-16">
+      <Reveal className="apple-section text-center">
+        <div className="mx-auto mb-6 h-16 w-16 overflow-hidden rounded-full">
+          <Image src="/logo.png" alt="Logo Visão Nobre" width={64} height={64} className="h-full w-full object-cover" />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <h1 className="text-[56px] font-bold leading-[1.05] tracking-[-0.02em] text-[#1d1d1f] md:text-[76px]">Visão Nobre</h1>
+        <p className="mx-auto mt-4 max-w-2xl text-lg font-light text-[#6e6e73]">{config.slogan}</p>
+        <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+          <Link href="/inscricao" className="apple-button-primary px-6 py-2.5 text-sm">
+            Fazer inscrição
+          </Link>
+          <Link href="/login" className="apple-button-secondary px-6 py-2.5 text-sm">
+            Área do aluno
+          </Link>
         </div>
-      </main>
-    </div>
+      </Reveal>
+
+      <Reveal className="apple-section border-t border-[#e5e5ea] pt-16">
+        <section>
+          <h2 className="text-[44px] font-bold tracking-[-0.01em] text-[#1d1d1f]">Sobre o Projeto</h2>
+          <p className="mt-6 max-w-3xl text-lg font-light text-[#6e6e73]">{config.missao}</p>
+          <div className="mt-8 flex flex-wrap gap-2">
+            {config.valores.map((valor) => (
+              <span key={valor} className="rounded-full bg-[#f0f0f2] px-3 py-1 text-xs text-[#6e6e73]">
+                {valor}
+              </span>
+            ))}
+          </div>
+        </section>
+      </Reveal>
+
+      <Reveal className="apple-section border-t border-[#e5e5ea] pt-16">
+        <section>
+          <h2 className="mb-8 text-[44px] font-bold tracking-[-0.01em] text-[#1d1d1f]">Nossos Cursos</h2>
+          <div className="grid gap-6 md:grid-cols-2">
+            {cursos.filter((curso) => curso.ativo).map((curso) => (
+              <CourseCard key={curso.id} {...curso} />
+            ))}
+          </div>
+        </section>
+      </Reveal>
+
+      <Reveal className="apple-section border-t border-[#e5e5ea] pt-16">
+        <section>
+          <h2 className="text-[34px] font-bold tracking-[-0.01em] text-[#1d1d1f]">Contato</h2>
+          <div className="mt-4 space-y-1 text-base text-[#6e6e73]">
+            <p>WhatsApp: {config.whatsapp}</p>
+            <p>Email: {config.email}</p>
+            <p>Instagram: {config.instagram}</p>
+          </div>
+        </section>
+      </Reveal>
+    </main>
   );
 }

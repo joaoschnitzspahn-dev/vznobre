@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Visão Nobre - Plataforma Social
 
-## Getting Started
+Sistema completo para landing page, inscrições, portal do aluno e painel administrativo do projeto social **Visão Nobre**.
 
-First, run the development server:
+## Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Next.js com App Router e TypeScript
+- Tailwind CSS
+- Supabase (PostgreSQL + Auth + Storage)
+- Deploy recomendado: Vercel
+
+## Variáveis de ambiente
+
+Crie um arquivo `.env.local`:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Setup local
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Configuração do Supabase
 
-## Learn More
+1. Crie um projeto no Supabase.
+2. No SQL Editor, execute `supabase/schema.sql`.
+3. Crie o bucket público `candidatoss` no Storage.
+4. Em Auth, crie usuários de alunos/admin.
+5. Defina `user_metadata.role = "admin"` para usuários administrativos.
 
-To learn more about Next.js, take a look at the following resources:
+## Regras de negócio implementadas
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- CPF único em candidaturas e perfis.
+- Upload de foto JPG/PNG com limite de 5MB no Supabase Storage.
+- Turma de Informática com capacidade de 10 alunos.
+- Trigger SQL para fechar turma ao lotar e abrir próxima automaticamente.
+- Rotas `/admin` protegidas por middleware com validação de role.
+- Rotas `/portal` exigem login.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Estrutura principal
 
-## Deploy on Vercel
+- `src/app/page.tsx`: landing page pública.
+- `src/app/inscricao/*`: formulário e confirmação com protocolo.
+- `src/app/portal/page.tsx`: dashboard do aluno.
+- `src/app/admin/*`: painel administrativo com sidebar.
+- `src/app/api/candidaturas/route.ts`: endpoint de envio da inscrição.
+- `src/middleware.ts`: proteção de rotas.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deploy na Vercel
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Conecte o repositório na Vercel.
+2. Configure as variáveis de ambiente.
+3. Faça o deploy.
