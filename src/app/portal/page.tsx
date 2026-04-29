@@ -99,6 +99,11 @@ export default async function PortalPage() {
         <article className="rounded-2xl border border-cyan-500/30 bg-[#10223d] p-4">
           <h2 className="font-semibold text-cyan-200">Roteiros das Aulas</h2>
           <ul className="mt-2 space-y-2 text-sm">
+            {roteiros.length === 0 && (
+              <li className="rounded bg-[#0a1628] p-2 text-slate-300">
+                Nenhum roteiro disponível ainda. Verifique se você está vinculado a uma turma e se o admin já cadastrou aulas.
+              </li>
+            )}
             {roteiros.map((aula) => (
               <li key={aula.id} className="rounded bg-[#0a1628] p-2">
                 <p className="font-medium">
@@ -114,6 +119,11 @@ export default async function PortalPage() {
         <article className="rounded-2xl border border-cyan-500/30 bg-[#10223d] p-4">
           <h2 className="font-semibold text-cyan-200">Minha Chamada</h2>
           <ul className="mt-2 space-y-2 text-sm">
+            {presencas.length === 0 && (
+              <li className="rounded bg-[#0a1628] p-2 text-slate-300">
+                Nenhuma presença/falta lançada ainda para suas aulas.
+              </li>
+            )}
             {presencas.map((registro) => {
               const aula = registro.aulas as { numero_aula?: number; data_aula?: string; titulo?: string; roteiro?: string } | null;
               return (

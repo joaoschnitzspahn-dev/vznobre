@@ -14,6 +14,51 @@ async function atualizarVinculos(formData: FormData) {
   revalidatePath("/admin/alunos");
 }
 
+async function sincronizarAprovados() {
+  "use server";
+  const admin = createAdminClient();
+  const { data: candidaturas } = await admin
+    .from("candidaturas")
+    .select("*")
+    .eq("status", "aprovado")
+    .not("email", "is", null);
+
+  for (const candidatura of candidaturas ?? []) {
+    const { data: usersPage } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
+    const existingUser = usersPage?.users?.find((u) => u.email?.toLowerCase() === String(candidatura.email).toLowerCase());
+    if (!existingUser?.id) continue;
+
+    const { data: curso } = await admin.from("cursos").select("id").eq("tipo", candidatura.curso_id).maybeSingle();
+
+    await admin.from("profiles").upsert(
+      {
+        user_id: existingUser.id,
+        nome: candidatura.nome,
+        cpf: candidatura.cpf,
+        data_nascimento: candidatura.data_nascimento,
+        escolaridade: candidatura.escolaridade,
+        endereco: {
+          cep: candidatura.cep,
+          rua: candidatura.rua,
+          numero: candidatura.numero,
+          bairro: candidatura.bairro,
+          cidade: candidatura.cidade,
+          estado: candidatura.estado,
+        },
+        whatsapp: candidatura.whatsapp,
+        email: candidatura.email,
+        foto_url: candidatura.foto_url,
+        curso_id: curso?.id ?? null,
+        turma_id: candidatura.turma_id ?? null,
+        status: "aprovado",
+      },
+      { onConflict: "user_id" },
+    );
+  }
+
+  revalidatePath("/admin/alunos");
+}
+
 export default async function AdminAlunosPage() {
   const supabase = await createClient();
   const [{ data: alunos }, { data: cursos }, { data: turmas }] = await Promise.all([
@@ -26,7 +71,13 @@ export default async function AdminAlunosPage() {
     <section className="surface-panel rounded-[28px] p-6">
       <h1 className="text-3xl font-black text-white">Gestão de Alunos</h1>
       <p className="mt-2 text-sm text-slate-300">Você pode ajustar manualmente curso e turma de cada aluno aprovado.</p>
+      <form action={sincronizarAprovados} className="mt-3">
+        <button className="neon-button px-4 py-1.5 text-xs">Sincronizar aprovados</button>
+      </form>
       <div className="mt-4 grid gap-3 md:grid-cols-2">
+        {(!alunos || alunos.length === 0) && (
+          <p className="text-sm text-slate-300">Nenhum aluno em `profiles` ainda. Clique em &quot;Sincronizar aprovados&quot;.</p>
+        )}
         {alunos?.map((aluno) => (
           <article key={aluno.id} className="liquid-panel rounded-2xl p-4 text-sm">
             <p className="font-semibold text-white">{aluno.nome}</p>
